@@ -31,7 +31,7 @@ function getResponse(hash, ttl) {
 	var cachedResponse = localStorage.getItem(hash);
 
 	if (cachedResponse) {
-        cachedResponse = JSON.parse(cachedResponse);
+		cachedResponse = JSON.parse(cachedResponse);
 
 		if (cachedResponse.date < Date.now() + ttl) {
 			return cachedResponse.value;
@@ -55,14 +55,14 @@ function circularReferenceRemover(key, value) {
 	return value;
 }
 
-var adapter = function(req) {
+module.exports = function(req) {
 	return new Promise(function(resolve, reject) {
-        var hash = hashRequestData(req);
+		var hash = hashRequestData(req);
 		var cachedResponse = getResponse(hash, req.ttl);
 
 		if (cachedResponse) {
 			return resolve(cachedResponse);
-        }
+		}
 
 		axios.defaults.adapter
 			.call(this, req)
@@ -75,5 +75,3 @@ var adapter = function(req) {
 			});
 	});
 };
-
-module.exports = adapter;
